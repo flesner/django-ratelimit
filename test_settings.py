@@ -1,9 +1,10 @@
 SECRET_KEY = 'ratelimit'
 
 INSTALLED_APPS = (
-    'django_nose',
     'ratelimit',
 )
+
+RATELIMIT_USE_CACHE = 'default'
 
 CACHES = {
     'default': {
@@ -26,5 +27,3 @@ DATABASES = {
         'NAME': 'test.db',
     },
 }
-
-TEST_RUNNER = 'django_nose.runner.NoseTestSuiteRunner'

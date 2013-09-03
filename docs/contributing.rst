@@ -8,27 +8,28 @@ Contributing
 Set Up
 ======
 
-Create a virtualenv_ and install the requirements with pip_::
+Create a virtualenv_ and install Django with pip_::
 
-    pip install -r requirements.txt
+    pip install Django
 
 
 Running the Tests
 =================
 
-The tests use Fabric_, just run::
+Running the tests is as easy as::
 
-    fab test
+    $ ./run.sh test
 
 
 Code Standards
 ==============
 
-Please follow PEP8_. New functionality should be tested, and the tests
-need to pass.
+I ask two things for pull requests.
+
+* The flake8_ tool must not report any violations.
+* All tests, including new tests where appropriate, must pass.
 
 
 .. _virtualenv: http://www.virtualenv.org/en/latest/
 .. _pip: http://www.pip-installer.org/en/latest/
-.. _Fabric: http://www.fabfile.org/
-.. _PEP8: http://www.python.org/dev/peps/pep-0008/
+.. _flake8: https://pypi.python.org/pypi/flake8

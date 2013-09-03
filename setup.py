@@ -2,6 +2,7 @@ from setuptools import setup, find_packages
 
 from ratelimit import __version__
 
+
 setup(
     name='django-ratelimit',
     version=__version__,
@@ -10,8 +11,8 @@ setup(
     author='James Socol',
     author_email='james@mozilla.com',
     url='http://github.com/jsocol/django-ratelimit',
-    license='BSD',
-    packages=find_packages(),
+    license='Apache Software License',
+    packages=find_packages(exclude=['test_settings']),
     include_package_data=True,
     package_data = {'': ['README.rst']},
     classifiers=[
@@ -20,7 +21,7 @@ setup(
         'Environment :: Web Environment :: Mozilla',
         'Framework :: Django',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
+        'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Topic :: Software Development :: Libraries :: Python Modules',
