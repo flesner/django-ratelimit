@@ -1,5 +1,6 @@
 import hashlib
 import re
+from time import strftime
 
 from django.conf import settings
 from django.core.cache import get_cache
@@ -16,6 +17,13 @@ _PERIODS = {
     'h': 60 * 60,
     'd': 24 * 60 * 60,
 }
+
+_PERIOD_KEY = {
+    1 : '%S',
+    60: '%M',
+    60 * 60: '%H',
+    24 * 60 * 60: '%j',
+    }
 
 rate_re = re.compile('([\d]+)/([\d]*)([smhd])')
 
@@ -37,10 +45,10 @@ def _split_rate(rate):
     return count, time
 
 
-def _get_keys(request, ip=True, field=None, keyfuncs=None):
+def _get_keys(request, ip=True, field=None, keyfuncs=None, period=None):
     keys = []
     if ip:
-        keys.append('ip:' + request.META['REMOTE_ADDR'])
+        keys.append(u'ip:{0}:{1}:{2}'.format(request.META['REMOTE_ADDR'], period, strftime(_PERIOD_KEY[period])))
     if field is not None:
         if not isinstance(field, (list, tuple)):
             field = [field]
@@ -78,7 +86,7 @@ def is_ratelimited(request, increment=False, ip=True, method=['POST'],
     request.limited = getattr(request, 'limited', False)
     if (not request.limited and increment and RATELIMIT_ENABLE and
             _method_match(request, method)):
-        _keys = _get_keys(request, ip, field, keys)
+        _keys = _get_keys(request, ip, field, keys, period)
         counts = _incr(cache, _keys, period)
         if any([c > count for c in counts.values()]):
             request.limited = True
