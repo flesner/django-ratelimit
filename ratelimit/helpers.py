@@ -3,7 +3,7 @@ import re
 from time import strftime
 
 from django.conf import settings
-from django.core.cache import get_cache
+from django.core.cache import caches
 
 
 __all__ = ['is_ratelimited']
@@ -91,7 +91,7 @@ def is_ratelimited(request, increment=False, ip=True, method=['POST'],
                    field=None, rate='5/m', keys=None):
     count, period = _split_rate(rate)
     cache = getattr(settings, 'RATELIMIT_USE_CACHE', 'default')
-    cache = get_cache(cache)
+    cache = caches[cache]
 
     request.limited = getattr(request, 'limited', False)
     if (not request.limited and increment and RATELIMIT_ENABLE and
