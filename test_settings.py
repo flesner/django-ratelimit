@@ -19,6 +19,10 @@ CACHES = {
             'PARSER_CLASS': 'redis.connection.HiredisParser'
         },
     },
+    'connection-errors': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': 'test-connection-errors',
+    },
 }
 
 DATABASES = {
@@ -27,3 +31,6 @@ DATABASES = {
         'NAME': 'test.db',
     },
 }
+
+# silence system check about unset `MIDDLEWARE_CLASSES`
+SILENCED_SYSTEM_CHECKS = ['1_7.W001']

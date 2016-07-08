@@ -1,9 +1,13 @@
-# -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
-from .decorators import ratelimit
+from ratelimit import ALL, UNSAFE
+from ratelimit.decorators import ratelimit
 
 
-class RateLimitMixin(object):
+__all__ = ['RatelimitMixin']
+
+
+class RatelimitMixin(object):
     """
     Mixin for usage in Class Based Views
     configured with the decorator ``ratelimit`` defaults.
@@ -13,33 +17,42 @@ class RateLimitMixin(object):
 
     Example::
 
-        class ContactView(RateLimitMixin, FormView):
+        class ContactView(RatelimitMixin, FormView):
             form_class = ContactForm
             template_name = "contact.html"
 
+            # Limit contact form by remote address.
+            ratelimit_key = 'ip'
             ratelimit_block = True
 
             def form_valid(self, form):
-                # do sth. here
+                # Whatever validation.
                 return super(ContactView, self).form_valid(form)
 
     """
-    ratelimit_ip = True
-    ratelimit_block = False
-    ratelimit_method = ['POST']
-    ratelimit_field = None
+    ratelimit_group = None
+    ratelimit_key = None
     ratelimit_rate = '5/m'
-    ratelimit_skip_if = None
-    ratelimit_keys = None
+    ratelimit_block = False
+    ratelimit_method = ALL
+
+    ALL = ALL
+    UNSAFE = UNSAFE
 
     def get_ratelimit_config(self):
+        # Ensures that the ratelimit_key is called as a function instead
+        # of a method if it is a callable (ie self is not passed).
+        if callable(self.ratelimit_key):
+            self.ratelimit_key = self.ratelimit_key.__func__
         return dict(
-            (k[len("ratelimit_"):], v)
-            for k, v in vars(self.__class__).items()
-            if k.startswith("ratelimit")
+            group=self.ratelimit_group,
+            key=self.ratelimit_key,
+            rate=self.ratelimit_rate,
+            block=self.ratelimit_block,
+            method=self.ratelimit_method,
         )
 
     def dispatch(self, *args, **kwargs):
         return ratelimit(
             **self.get_ratelimit_config()
-        )(super(RateLimitMixin, self).dispatch)(*args, **kwargs)
+        )(super(RatelimitMixin, self).dispatch)(*args, **kwargs)
