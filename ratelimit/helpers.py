@@ -48,6 +48,7 @@ def _split_rate(rate):
 def _get_keys(request, ip=True, field=None, keyfuncs=None, period=None):
     keys = []
     if ip:
+        print u'REMOTE: {}, {}'.format(request.META['REMOTE_ADDR'], period)
         keys.append(u'ip:{0}:{1}:{2}'.format(request.META['REMOTE_ADDR'], period, strftime(_PERIOD_KEY[period])))
     if field is not None:
         if not isinstance(field, (list, tuple)):
